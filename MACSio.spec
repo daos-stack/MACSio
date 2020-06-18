@@ -50,7 +50,7 @@ cmake -DCMAKE_INSTALL_PREFIX=%{_bindir} \
     -DWITH_JSON-CWX_PREFIX=/usr \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
-    -DWITH_HDF5_PREFIX=/usr/lib64/mpich
+    -DWITH_HDF5_PREFIX=/usr/lib64/mpich-%{_arch}
 make
 
 %install
