@@ -9,6 +9,7 @@ Source0:        https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  json-cwx
+BuildRequires:  hdf5-devel
 BuildRequires:  hdf5-mpich-devel
 BuildRequires:  mpich
 
@@ -50,7 +51,7 @@ cmake -DCMAKE_INSTALL_PREFIX=%{_bindir} \
     -DWITH_JSON-CWX_PREFIX=/usr \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
-    -DWITH_HDF5_PREFIX=/usr/lib64/mpich-%{_arch}
+    -DWITH_HDF5_PREFIX=/usr/lib64/mpich
 make
 
 %install
