@@ -61,5 +61,5 @@ make
 %{_bindir}/*
 
 %changelog
-* Tue Jun 18 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
+* Thu Jun 18 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
 - Initial version
