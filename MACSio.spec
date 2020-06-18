@@ -7,6 +7,9 @@ License:        GPL
 URL:            https://github.com/LLNL/MACSio
 Source0:        https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 
+%if 0%{?suse_version}
+BuildRequires:  gcc-gfortran
+%endif
 BuildRequires:  cmake
 BuildRequires:  json-cwx
 BuildRequires:  hdf5-devel
