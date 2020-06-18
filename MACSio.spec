@@ -9,7 +9,6 @@ Source0:        https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  json-cwx
-BuildRequires:  hdf5-mpich
 BuildRequires:  hdf5-mpich-devel
 BuildRequires:  mpich
 
@@ -43,7 +42,7 @@ The name "MACSio" is pronounced max-eee-oh.
 
 %build
 %if (0%{?suse_version} >= 1500)
-  module load gnu-mpich/3.3
+  module load gnu-mpich
 %else
   module load mpi/mpich-%{_arch}
 %endif
@@ -60,9 +59,7 @@ make
 %files
 %license LICENSE
 %{_bindir}/*
-# %{_includedir}/*
-# %{_libdir}/*
 
 %changelog
-* Tue Jun 16 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
+* Tue Jun 17 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
 - Initial version
