@@ -8,7 +8,7 @@ URL:            https://github.com/LLNL/MACSio
 Source0:        https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 
 %if 0%{?suse_version}
-BuildRequires:  gcc-gfortran
+BuildRequires:  gcc-fortran
 %endif
 BuildRequires:  cmake
 BuildRequires:  json-cwx
