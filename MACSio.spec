@@ -14,7 +14,7 @@ BuildRequires:  cmake
 BuildRequires:  json-cwx
 BuildRequires:  hdf5-devel
 BuildRequires:  hdf5-mpich-devel
-BuildRequires:  mpich
+BuildRequires:  mpich-devel
 
 %description
 MACSio is being developed to fill a long existing void in co-design proxy
