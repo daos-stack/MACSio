@@ -57,7 +57,13 @@ cmake -DCMAKE_INSTALL_PREFIX=%{_bindir} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
     -DWITH_HDF5_PREFIX=/usr/lib64/mpich
+%if (0%{?suse_version} >= 1500)
+ln -s %{_includedir}/H5pubconf-64.h %{_includedir}/H5pubconf.h
+%endif
 make
+%if (0%{?suse_version} >= 1500)
+rm -f %{_includedir}/H5pubconf.h
+%endif
 
 %install
 %{make_install}
