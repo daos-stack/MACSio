@@ -10,6 +10,7 @@ Source0: https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 %if 0%{?suse_version}
 BuildRequires: gcc-fortran
 BuildRequires: lua-lmod
+BuildRequires: gcc, gcc-c++
 %endif
 BuildRequires: cmake
 BuildRequires: json-cwx
