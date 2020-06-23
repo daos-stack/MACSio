@@ -1,22 +1,24 @@
-Name:           MACSio
-Version:        1.1
-Release:        1%{?commit:.git%{shortcommit}}%{?dist}
-Summary:        A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
+Name:    MACSio
+Version: 1.1
+Release: 1%{?commit:.git%{shortcommit}}%{?dist}
+Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
-License:        GPL
-URL:            https://github.com/LLNL/MACSio
-Source0:        https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
+License: GPL
+URL:     https://github.com/LLNL/MACSio
+Source0: https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 
-BuildRequires:  gcc, gcc-c++
+BuildRequires: gcc, gcc-c++
 %if 0%{?suse_version}
-BuildRequires:  gcc-fortran
-BuildRequires:  Modules
+BuildRequires: gcc-fortran
+BuildRequires: Modules
 %endif
-BuildRequires:  cmake
-BuildRequires:  json-cwx
-BuildRequires:  hdf5-devel%{?_isa}
-BuildRequires:  hdf5-mpich-devel%{?_isa}
-BuildRequires:  mpich-devel%{?_isa}
+BuildRequires: cmake
+BuildRequires: json-cwx
+BuildRequires: hdf5-devel%{?_isa}
+BuildRequires: hdf5-mpich-devel%{?_isa}
+BuildRequires: mpich-devel%{?_isa}
+
+Requires: json-cwx
 
 %description
 MACSio is being developed to fill a long existing void in co-design proxy
