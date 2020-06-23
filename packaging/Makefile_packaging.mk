@@ -384,7 +384,13 @@ ifndef DEBFULLNAME
 endif
 
 test:
-	@echo "No test defined for this module"
+	# Test the rpmbuild by installing the built RPM
+	DAOS_STACK_LOCAL_REPO = https://repo.dc.hpdd.intel.com/repository/daos-stack-el-7-x86_64-stable-local/
+	rm -f /etc/yum.repos.d/*"$DAOS_STACK_LOCAL_REPO"
+	yum-config-manager --add-repo="$REPOSITORY_URL"/"$DAOS_STACK_LOCAL_REPO"
+	echo "gpgcheck = False" >> /etc/yum.repos.d/*"${DAOS_STACK_LOCAL_REPO//\//_}".repo
+	$(call install_repos,$(NAME)@$(BRANCH_NAME):$(BUILD_NUMBER))
+	yum -y install $(NAME)
 
 show_version:
 	@echo $(VERSION)
