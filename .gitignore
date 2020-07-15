@@ -1,0 +1,4 @@
+_topdir/
+*.tar.*
+*.code-workspace
+*.sw?
