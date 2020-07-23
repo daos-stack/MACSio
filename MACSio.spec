@@ -124,7 +124,7 @@ done
 %endif
 
 %changelog
-* Wed Jul 23 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-2
+* Thu Jul 23 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-2
 - Renamed existing package to MACSio-mpich and added the MACSio-openmpi3 package
 
 * Wed Jun 24 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
