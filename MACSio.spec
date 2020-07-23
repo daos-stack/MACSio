@@ -72,10 +72,6 @@ BuildRequires: mpich-devel%{?_isa}
 
 %description mpich
 MACSio for MPICH
-$endif
-
-%description mpich
-MACSio for MPICH
 %endif
 
 %if %{with_openmpi3}
