@@ -86,6 +86,11 @@ MACSio for OpenMPI3
 
 %prep
 %setup -q
+for mpi in %{?mpi_list}
+do
+  mkdir $mpi
+  cp -Rs * $mpi/
+done
 
 %build
 for mpi in %{?mpi_list}
