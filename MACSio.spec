@@ -89,7 +89,7 @@ MACSio for OpenMPI3
 for mpi in %{?mpi_list}
 do
   mkdir $mpi
-  cp -Rs * $mpi/
+  cp -s * $mpi/
 done
 
 %build
