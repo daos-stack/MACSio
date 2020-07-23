@@ -9,7 +9,12 @@
 %endif
 
 %if (0%{?suse_version} >= 1500)
-%global module_load() if [ "%{1}" == "openmpi3" ]; then module load gnu-openmpi; else module load gnu-%{1}; fi
+%global module_load() \
+  if [ "%{1}" == "openmpi3" ]; then \
+    module load gnu-openmpi; \
+  else \
+    module load gnu-%{1}; \
+  fi
 %else
 %global module_load() module load mpi/%{1}-%{_arch}
 %endif
@@ -31,27 +36,8 @@ BuildRequires: gcc, gcc-c++
 BuildRequires: cmake
 BuildRequires: json-cwx
 BuildRequires: hdf5-devel%{?_isa}
+
 Requires: json-cwx
-
-%if %{with_mpich}
-%package mpich
-Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application for MPICH
-BuildRequires: hdf5-mpich-devel%{?_isa}
-BuildRequires: mpich-devel%{?_isa}
-
-%description mpich
-MACSio for MPICH
-%endif
-
-%if %{with_openmpi3}
-%package openmpi3
-Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application for OpenMPI3
-BuildRequires: hdf5-openmpi3-devel%{?_isa}
-BuildRequires: openmpi3-devel%{?_isa}
-
-%description openmpi3
-MACSio for OpenMPI3
-%endif
 
 %description
 MACSio is being developed to fill a long existing void in co-design proxy
@@ -77,6 +63,30 @@ with the same set of customizable data objects.
 We hope MACSio helps to put the MAX in scalable I/O performance ;)
 
 The name "MACSio" is pronounced max-eee-oh.
+
+%if %{with_mpich}
+%package mpich
+Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application for MPICH
+BuildRequires: hdf5-mpich-devel%{?_isa}
+BuildRequires: mpich-devel%{?_isa}
+
+%description mpich
+MACSio for MPICH
+$endif
+
+%description mpich
+MACSio for MPICH
+%endif
+
+%if %{with_openmpi3}
+%package openmpi3
+Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application for OpenMPI3
+BuildRequires: hdf5-openmpi3-devel%{?_isa}
+BuildRequires: openmpi3-devel%{?_isa}
+
+%description openmpi3
+MACSio for OpenMPI3
+%endif
 
 %prep
 %setup -q
@@ -109,12 +119,11 @@ do
 done
 
 %files
-%if %{with_mpich}
 %license LICENSE
+%if %{with_mpich}
 %{_bindir}/mpich/*
 %endif
 %if %{with_openmpi3}
-%license LICENSE
 %{_bindir}/openmpi3/*
 %endif
 
