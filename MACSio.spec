@@ -85,6 +85,9 @@ MACSio for OpenMPI 3
 %setup -q
 
 %build
+%if (0%{?suse_version} >= 1500)
+  sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
+%endif
 for mpi in %{?mpi_list}
 do
   mkdir $mpi
@@ -96,9 +99,6 @@ do
     -DENABLE_HDF5_PLUGIN=ON \
     -DWITH_HDF5_PREFIX=%{_libdir}/$mpi \
     ..
-  %if (0%{?suse_version} >= 1500)
-    sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
-  %endif
   make
   module purge
   popd
