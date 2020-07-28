@@ -9,12 +9,7 @@
 %endif
 
 %if (0%{?suse_version} >= 1500)
-%global module_load() \
-  if [ "%{1}" == "openmpi3" ]; then \
-    module load gnu-openmpi; \
-  else \
-    module load gnu-%{1}; \
-  fi
+%global module_load() if [ "%{1}" == "openmpi3" ]; then module load gnu-openmpi; else module load gnu-%{1}; fi
 %else
 %global module_load() module load mpi/%{1}-%{_arch}
 %endif
@@ -36,7 +31,6 @@ BuildRequires: gcc, gcc-c++
 BuildRequires: cmake
 BuildRequires: json-cwx
 BuildRequires: hdf5-devel%{?_isa}
-
 Requires: json-cwx
 
 %description
@@ -64,11 +58,13 @@ We hope MACSio helps to put the MAX in scalable I/O performance ;)
 
 The name "MACSio" is pronounced max-eee-oh.
 
+
 %if %{with_mpich}
 %package mpich
-Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application for MPICH
+Summary: MACSio for MPICH
 BuildRequires: hdf5-mpich-devel%{?_isa}
 BuildRequires: mpich-devel%{?_isa}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description mpich
 MACSio for MPICH
@@ -76,21 +72,17 @@ MACSio for MPICH
 
 %if %{with_openmpi3}
 %package openmpi3
-Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application for OpenMPI3
+Summary: MACSio for OpenMPI 3
 BuildRequires: hdf5-openmpi3-devel%{?_isa}
 BuildRequires: openmpi3-devel%{?_isa}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description openmpi3
-MACSio for OpenMPI3
+MACSio for OpenMPI 3
 %endif
 
 %prep
 %setup -q
-for mpi in %{?mpi_list}
-do
-  mkdir $mpi
-  cp -s * $mpi/
-done
 
 %build
 for mpi in %{?mpi_list}
@@ -102,10 +94,11 @@ do
     -DWITH_JSON-CWX_PREFIX=%{_usr} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
-    -DWITH_HDF5_PREFIX=%{_libdir}/$mpi
-%if (0%{?suse_version} >= 1500)
-  sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
-%endif
+    -DWITH_HDF5_PREFIX=%{_libdir}/$mpi \
+    ..
+  %if (0%{?suse_version} >= 1500)
+    sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
+  %endif
   make
   module purge
   popd
@@ -115,22 +108,24 @@ done
 for mpi in %{?mpi_list}
 do
   %module_load $mpi
-  make -C $mpi install DESTDIR=%{buildroot}
+  %{make_install} -C $mpi
   module purge
 done
 
 %files
 %license LICENSE
 %if %{with_mpich}
+%files mpich
 %{_bindir}/mpich/*
 %endif
 %if %{with_openmpi3}
+%files openmpi3
 %{_bindir}/openmpi3/*
 %endif
 
 %changelog
 * Thu Jul 23 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-2
-- Renamed existing package to MACSio-mpich and added the MACSio-openmpi3 package
+- Added mpich and openmpi3 packages
 
 * Wed Jun 24 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
 - Initial version
