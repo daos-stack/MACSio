@@ -93,13 +93,13 @@ do
   mkdir $mpi
   pushd $mpi
   %module_load $mpi
-  cmake -DCMAKE_INSTALL_PREFIX=%{_bindir}/$mpi \
-    -DWITH_JSON-CWX_PREFIX=%{_usr} \
+  cmake -DCMAKE_INSTALL_PREFIX=%{_libdir}/$mpi \
+    -DWITH_JSON-CWX_PREFIX=%{prefix} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
     -DWITH_HDF5_PREFIX=%{_libdir}/$mpi \
     ..
-  make
+  %{make_build}
   module purge
   popd
 done
@@ -116,11 +116,11 @@ done
 %license LICENSE
 %if %{with_mpich}
 %files mpich
-%{_bindir}/mpich/*
+%{_libdir}/mpich/*
 %endif
 %if %{with_openmpi3}
 %files openmpi3
-%{_bindir}/openmpi3/*
+%{_libdir}/openmpi3/*
 %endif
 
 %changelog
