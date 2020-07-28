@@ -93,7 +93,7 @@ do
   mkdir $mpi
   pushd $mpi
   %module_load $mpi
-  cmake -DCMAKE_INSTALL_PREFIX=%{_libdir}/$mpi \
+  cmake -DCMAKE_INSTALL_PREFIX=%{_libdir}/$mpi/bin \
     -DWITH_JSON-CWX_PREFIX=%{prefix} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
@@ -116,11 +116,11 @@ done
 %license LICENSE
 %if %{with_mpich}
 %files mpich
-%{_libdir}/mpich/*
+%{_libdir}/mpich/bin/*
 %endif
 %if %{with_openmpi3}
 %files openmpi3
-%{_libdir}/openmpi3/*
+%{_libdir}/openmpi3/bin/*
 %endif
 
 %changelog
