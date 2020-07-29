@@ -1,6 +1,22 @@
+%global with_mpich 1
+%global with_openmpi3 1
+
+%if %{with_mpich}
+%global mpi_list mpich
+%endif
+%if %{with_openmpi3}
+%global mpi_list %{?mpi_list} openmpi3
+%endif
+
+%if (0%{?suse_version} >= 1500)
+%global module_load() if [ "%{1}" == "openmpi3" ]; then module load gnu-openmpi; else module load gnu-%{1}; fi
+%else
+%global module_load() module load mpi/%{1}-%{_arch}
+%endif
+
 Name:    MACSio
 Version: 1.1
-Release: 1%{?commit:.git%{shortcommit}}%{?dist}
+Release: 2%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
@@ -15,9 +31,6 @@ BuildRequires: gcc, gcc-c++
 BuildRequires: cmake
 BuildRequires: json-cwx
 BuildRequires: hdf5-devel%{?_isa}
-BuildRequires: hdf5-mpich-devel%{?_isa}
-BuildRequires: mpich-devel%{?_isa}
-
 Requires: json-cwx
 
 %description
@@ -45,32 +58,74 @@ We hope MACSio helps to put the MAX in scalable I/O performance ;)
 
 The name "MACSio" is pronounced max-eee-oh.
 
+
+%if %{with_mpich}
+%package mpich
+Summary: MACSio for MPICH
+BuildRequires: hdf5-mpich-devel%{?_isa}
+BuildRequires: mpich-devel%{?_isa}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%description mpich
+MACSio for MPICH
+%endif
+
+%if %{with_openmpi3}
+%package openmpi3
+Summary: MACSio for OpenMPI 3
+BuildRequires: hdf5-openmpi3-devel%{?_isa}
+BuildRequires: openmpi3-devel%{?_isa}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%description openmpi3
+MACSio for OpenMPI 3
+%endif
+
 %prep
 %setup -q
 
 %build
 %if (0%{?suse_version} >= 1500)
-  module load gnu-mpich
-%else
-  module load mpi/mpich-%{_arch}
+  sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
 %endif
-cmake -DCMAKE_INSTALL_PREFIX=%{_bindir} \
-    -DWITH_JSON-CWX_PREFIX=/usr \
+for mpi in %{?mpi_list}
+do
+  mkdir $mpi
+  pushd $mpi
+  %module_load $mpi
+  cmake -DCMAKE_INSTALL_PREFIX=%{_libdir}/$mpi/bin \
+    -DWITH_JSON-CWX_PREFIX=%{prefix} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
-    -DWITH_HDF5_PREFIX=/usr/lib64/mpich
-%if (0%{?suse_version} >= 1500)
-sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
-%endif
-make
+    -DWITH_HDF5_PREFIX=%{_libdir}/$mpi \
+    ..
+  %{make_build}
+  module purge
+  popd
+done
 
 %install
-%{make_install}
+for mpi in %{?mpi_list}
+do
+  %module_load $mpi
+  %{make_install} -C $mpi
+  module purge
+done
 
 %files
 %license LICENSE
-%{_bindir}/*
+%if %{with_mpich}
+%files mpich
+%{_libdir}/mpich/bin/*
+%endif
+%if %{with_openmpi3}
+%files openmpi3
+%{_libdir}/openmpi3/bin/*
+%endif
 
 %changelog
+* Thu Jul 23 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-2
+- Added mpich and openmpi3 packages
+
 * Wed Jun 24 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-1
 - Initial version
