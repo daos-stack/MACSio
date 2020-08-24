@@ -9,7 +9,7 @@
 %endif
 
 %if (0%{?suse_version} >= 1500)
-%global module_load() MODULEPATH=/usr/share/modules if [ "%{1}" == "openmpi3" ]; then module load gnu-openmpi; else module load gnu-%{1}; fi
+%global module_load() if [ "%{1}" == "openmpi3" ]; then MODULEPATH=/usr/share/modules module load gnu-openmpi; else MODULEPATH=/usr/share/modules module load gnu-%{1}; fi
 %global mpi_libdir %{_libdir}/mpi/gcc
 %global cmake cmake
 %else
@@ -102,7 +102,7 @@ do
   mkdir $mpi
   pushd $mpi
   %module_load $mpi
-  cmake -DCMAKE_INSTALL_PREFIX=%{mpi_libdir}/$mpi/bin \
+  %{cmake} -DCMAKE_INSTALL_PREFIX=%{mpi_libdir}/$mpi/bin \
     -DWITH_JSON-CWX_PREFIX=%{prefix} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
