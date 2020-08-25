@@ -1,3 +1,5 @@
+%global daos_major 0
+
 %global with_mpich 1
 %global with_openmpi3 1
 
