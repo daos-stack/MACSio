@@ -1,3 +1,5 @@
+%global daos_major 0
+
 %global with_mpich 1
 %global with_openmpi3 1
 
@@ -9,26 +11,33 @@
 %endif
 
 %if (0%{?suse_version} >= 1500)
-%global module_load() if [ "%{1}" == "openmpi3" ]; then module load gnu-openmpi; else module load gnu-%{1}; fi
+%global module_load() if [ "%{1}" == "openmpi3" ]; then MODULEPATH=/usr/share/modules module load gnu-openmpi; else MODULEPATH=/usr/share/modules module load gnu-%{1}; fi
+%global mpi_libdir %{_libdir}/mpi/gcc
+%global cmake cmake
 %else
 %global module_load() module load mpi/%{1}-%{_arch}
+%global mpi_libdir %{_libdir}
+%global cmake cmake3
 %endif
 
 Name:    MACSio
 Version: 1.1
-Release: 2%{?commit:.git%{shortcommit}}%{?dist}
+Release: 3%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
 URL:     https://github.com/LLNL/MACSio
 Source0: https://github.com/LLNL/%{name}/archive/v%{version}.tar.gz
 
-%if 0%{?suse_version}
+%if (0%{?suse_version} >= 1500)
 BuildRequires: gcc-fortran
+BuildRequires: cmake >= 3.1
 BuildRequires: lua-lmod
-BuildRequires: gcc, gcc-c++
+%else
+BuildRequires: cmake3 >= 3.1
+BuildRequires: Lmod
 %endif
-BuildRequires: cmake
+BuildRequires: gcc, gcc-c++
 BuildRequires: json-cwx
 BuildRequires: hdf5-devel%{?_isa}
 Requires: json-cwx
@@ -65,6 +74,7 @@ Summary: MACSio for MPICH
 BuildRequires: hdf5-mpich-devel%{?_isa}
 BuildRequires: mpich-devel%{?_isa}
 Requires: %{name}%{?_isa} = %{version}-%{release}
+Provides: %{name}-mpich2-daos-%{daos_major} = %{version}-%{release}
 
 %description mpich
 MACSio for MPICH
@@ -76,6 +86,7 @@ Summary: MACSio for OpenMPI 3
 BuildRequires: hdf5-openmpi3-devel%{?_isa}
 BuildRequires: openmpi3-devel%{?_isa}
 Requires: %{name}%{?_isa} = %{version}-%{release}
+Provides: %{name}-openmpi3-daos-%{daos_major} = %{version}-%{release}
 
 %description openmpi3
 MACSio for OpenMPI 3
@@ -93,11 +104,11 @@ do
   mkdir $mpi
   pushd $mpi
   %module_load $mpi
-  cmake -DCMAKE_INSTALL_PREFIX=%{_libdir}/$mpi/bin \
+  %{cmake} -DCMAKE_INSTALL_PREFIX=%{mpi_libdir}/$mpi/bin \
     -DWITH_JSON-CWX_PREFIX=%{prefix} \
     -DENABLE_SILO_PLUGIN=OFF \
     -DENABLE_HDF5_PLUGIN=ON \
-    -DWITH_HDF5_PREFIX=%{_libdir}/$mpi \
+    -DWITH_HDF5_PREFIX=%{mpi_libdir}/$mpi \
     ..
   %{make_build}
   module purge
@@ -116,14 +127,17 @@ done
 %license LICENSE
 %if %{with_mpich}
 %files mpich
-%{_libdir}/mpich/bin/*
+%{mpi_libdir}/mpich/bin/*
 %endif
 %if %{with_openmpi3}
 %files openmpi3
-%{_libdir}/openmpi3/bin/*
+%{mpi_libdir}/openmpi3/bin/*
 %endif
 
 %changelog
+* Mon Aug 24 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-3
+- Enable build with SLES15.2
+
 * Thu Jul 23 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-2
 - Added mpich and openmpi3 packages
 
