@@ -1,4 +1,4 @@
-%global daos_major 0
+%global daos_major 1
 
 %global with_mpich 1
 %global with_openmpi3 1
@@ -22,7 +22,7 @@
 
 Name:    MACSio
 Version: 1.1
-Release: 4%{?commit:.git%{shortcommit}}%{?dist}
+Release: 5%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
@@ -135,6 +135,9 @@ done
 %endif
 
 %changelog
+* Mon Dec 14 2020  Kenneth Cain <kenneth.c.cain@intel.com> - 1.1-5
+- Update packaging to build with libdaos.so.1
+
 * Tue Nov 17 2020  Maureen Jean <maureen.jean@intel.com> - 1.1-4
 - update to build with latest hdf5
 
