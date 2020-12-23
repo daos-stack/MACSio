@@ -22,7 +22,7 @@
 
 Name:    MACSio
 Version: 1.1
-Release: 4%{?commit:.git%{shortcommit}}%{?dist}
+Release: 5%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
@@ -135,6 +135,9 @@ done
 %endif
 
 %changelog
+* Wed Dec 23 2020  Maureen Jean <maureen.jean@intel.com> - 1.1-5
+- update to build with latest hdf5
+
 * Tue Nov 17 2020  Maureen Jean <maureen.jean@intel.com> - 1.1-4
 - update to build with latest hdf5
 
