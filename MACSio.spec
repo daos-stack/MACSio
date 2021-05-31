@@ -1,10 +1,18 @@
-%global daos_major 0
-
 %global with_mpich 1
+
+%if (0%{?rhel} >= 8)
+%global with_openmpi 1
+%global with_openmpi3 0
+%else
+%global with_openmpi 0
 %global with_openmpi3 1
+%endif
 
 %if %{with_mpich}
 %global mpi_list mpich
+%endif
+%if %{with_openmpi}
+%global mpi_list %{?mpi_list} openmpi
 %endif
 %if %{with_openmpi3}
 %global mpi_list %{?mpi_list} openmpi3
@@ -22,7 +30,7 @@
 
 Name:    MACSio
 Version: 1.1
-Release: 4%{?commit:.git%{shortcommit}}%{?dist}
+Release: 5%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
@@ -74,10 +82,20 @@ Summary: MACSio for MPICH
 BuildRequires: hdf5-mpich-devel%{?_isa}
 BuildRequires: mpich-devel%{?_isa}
 Requires: %{name}%{?_isa} = %{version}-%{release}
-Provides: %{name}-mpich2-daos-%{daos_major} = %{version}-%{release}
 
 %description mpich
 MACSio for MPICH
+%endif
+
+%if %{with_openmpi}
+%package openmpi
+Summary: MACSio for OpenMPI
+BuildRequires: hdf5-openmpi-devel%{?_isa}
+BuildRequires: openmpi-devel%{?_isa}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%description openmpi
+MACSio for OpenMPI
 %endif
 
 %if %{with_openmpi3}
@@ -86,7 +104,6 @@ Summary: MACSio for OpenMPI 3
 BuildRequires: hdf5-openmpi3-devel%{?_isa}
 BuildRequires: openmpi3-devel%{?_isa}
 Requires: %{name}%{?_isa} = %{version}-%{release}
-Provides: %{name}-openmpi3-daos-%{daos_major} = %{version}-%{release}
 
 %description openmpi3
 MACSio for OpenMPI 3
@@ -99,25 +116,25 @@ MACSio for OpenMPI 3
 %if (0%{?suse_version} >= 1500)
   sed -i -e s/H5pubconf.h/H5pubconf-64.h/ plugins/macsio_hdf5.c
 %endif
-for mpi in %{?mpi_list}
-do
+for mpi in %{?mpi_list}; do
   mkdir $mpi
   pushd $mpi
   %module_load $mpi
   %{cmake} -DCMAKE_INSTALL_PREFIX=%{mpi_libdir}/$mpi/bin \
-    -DWITH_JSON-CWX_PREFIX=%{prefix} \
-    -DENABLE_SILO_PLUGIN=OFF \
-    -DENABLE_HDF5_PLUGIN=ON \
-    -DWITH_HDF5_PREFIX=%{mpi_libdir}/$mpi \
-    ..
+           -DWITH_JSON-CWX_PREFIX=%{prefix}              \
+           -DENABLE_SILO_PLUGIN=OFF                      \
+           -DENABLE_HDF5_PLUGIN=ON                       \
+           -DWITH_HDF5_PREFIX=%{mpi_libdir}/$mpi         \
+           -DCMAKE_C_FLAGS="${RPM_OPT_FLAGS}"            \
+           -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS}"          \
+           ..
   %{make_build}
   module purge
   popd
 done
 
 %install
-for mpi in %{?mpi_list}
-do
+for mpi in %{?mpi_list}; do
   %module_load $mpi
   %{make_install} -C $mpi
   module purge
@@ -129,14 +146,22 @@ done
 %files mpich
 %{mpi_libdir}/mpich/bin/*
 %endif
+%if %{with_openmpi}
+%files openmpi
+%{mpi_libdir}/openmpi/bin/*
+%endif
 %if %{with_openmpi3}
 %files openmpi3
 %{mpi_libdir}/openmpi3/bin/*
 %endif
 
 %changelog
-* Tue Nov 17 2020  Maureen Jean <maureen.jean@intel.com> - 1.1-4
-- update to build with latest hdf5
+* Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 1.1-5
+- Add openmpi build for EL8
+- remove daos_major virtual provides
+
+* Tue Nov 17 2020 Maureen Jean <maureen.jean@intel.com> - 1.1-4
+- Update to build with latest hdf5
 
 * Mon Aug 24 2020 Phil Henderson <phillip.henderson@intel.com> - 1.1-3
 - Enable build with SLES15.2
