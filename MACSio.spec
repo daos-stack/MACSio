@@ -30,7 +30,7 @@
 
 Name:    MACSio
 Version: 1.1
-Release: 5%{?commit:.git%{shortcommit}}%{?dist}
+Release: 6%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
@@ -156,6 +156,9 @@ done
 %endif
 
 %changelog
+* Fri Nov 12 2021 Wang Shilong <shilong.wang@intel.com> - 1.1-6
+- Rebuilt for breaking DAOS API change
+
 * Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 1.1-5
 - Add openmpi build for EL8
 - remove daos_major virtual provides
