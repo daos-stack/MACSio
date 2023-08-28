@@ -30,7 +30,7 @@
 
 Name:    MACSio
 Version: 1.1
-Release: 6%{?commit:.git%{shortcommit}}%{?dist}
+Release: 7%{?commit:.git%{shortcommit}}%{?dist}
 Summary: A Multi-purpose, Application-Centric, Scalable I/O Proxy Application
 
 License: GPL
@@ -142,20 +142,26 @@ done
 
 %files
 %license LICENSE
+
 %if %{with_mpich}
 %files mpich
 %{mpi_libdir}/mpich/bin/*
 %endif
+
 %if %{with_openmpi}
 %files openmpi
 %{mpi_libdir}/openmpi/bin/*
 %endif
+
 %if %{with_openmpi3}
 %files openmpi3
 %{mpi_libdir}/openmpi3/bin/*
 %endif
 
 %changelog
+* Tue Jul 04 2023 Brian J. Murrell <brian.murrell@intel.com> - 1.1-7
+- Rebuild for EL9
+
 * Mon Mar 14 2022 Mohamad Chaarawi <mohamad.chaarawi@intel.com> - 1.1-6
 - Update to build with HDF5 1.13.1
 
